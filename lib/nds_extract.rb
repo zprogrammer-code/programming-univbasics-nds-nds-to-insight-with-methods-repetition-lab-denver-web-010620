@@ -2,7 +2,6 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require_relative './directors_database'
 
 def directors_totals(source)
-  #  Here's our solution. You can replace with your solution if you prefer.
   result = {}
   director_index = 0
   while director_index < source.size do
@@ -14,7 +13,6 @@ def directors_totals(source)
 end
 
 def gross_for_director(d)
-  #  Here's our solution. You can replace with your solution if you prefer.
   total = 0
   index = 0
 
