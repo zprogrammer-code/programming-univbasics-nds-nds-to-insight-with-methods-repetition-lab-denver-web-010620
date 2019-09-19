@@ -24,13 +24,13 @@ def gross_for_director(d)
   total
 end
 
-def list_of_directors(source)
+def list_of_directors
   # Write this implementation
+  directors_database.map{ |d| d[:name] }
 end
 
-def total_gross(source)
+def total_gross
   # Write this implementation
-  #
   # Should use methods:
   # 1. directors_totals: returns a Hash of { dir_name => gross }
   # 2. list_of_directors: names provides an Array of directors names (use
@@ -38,6 +38,5 @@ def total_gross(source)
   # Visit each key (i.e. director name), look up the value in the hash
   # returned by directors_totals, and add it to a running total. When done,
   # return the total
+  list_of_directors.reduce(0){|total, name| total += directors_totals[name]}
 end
-
-
