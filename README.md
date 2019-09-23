@@ -6,9 +6,8 @@
 
 ## Introduction
 
-In the previous lab we saw how wrapping "raw" use of Ruby primitive
-instructions (REEPETITION, `Array` methods, etc.) into methods makes it easier
-for humans to reason about code.
+In the previous lab we saw how "First-Order" methods make it easier for humans
+to reason about code.
 
 However, we can create code that is easier to maintain, clearer and more
 beautiful if we wrap "First-Order" methods inside of _other methods_. In the
@@ -66,8 +65,8 @@ p grand_piece_total #=> 1192
 
 ## Wrap a First-Order Method
 
-Looking at the starter code, the inner-most part is _still_ not so easy to
-reason about. Let's zoom in to it:
+Looking at the starter code, the main loop is _still_ not so easy to reason
+about. Let's zoom in to it:
 
 ```ruby
 # Non-Runnable!
