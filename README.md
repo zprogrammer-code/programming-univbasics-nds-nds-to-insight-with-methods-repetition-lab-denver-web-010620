@@ -72,6 +72,7 @@ Looking at the starter code, the main loop is _still_ not so easy to reason
 about. Let's zoom in to it:
 
 ```ruby
+# Non-runnable
 grand_total = 0
 row_index = 0
 while row_index < vm.length do
