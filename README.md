@@ -2,7 +2,7 @@
 
 ## Learning Goals
 
-* Create a "First-Order" method
+* Create an "Nth-Order" method
 
 ## Introduction
 
@@ -13,7 +13,16 @@ However, we can create code that is easier to maintain, clearer and more
 beautiful if we wrap "First-Order" methods inside of _other methods_. In the
 same way that we nested "raw" `[]`,  `Hash`, and `Array` methods _inside_
 "First-Order" methods, we can nest "First-Order" methods _inside_ other
-methods.
+methods. We're going to call those Nth-Order methods.
+
+"Make Breakfast" is an Nth-Order method in Real Life. It contains "Make toast"
+and "Make coffee." Each of those have multiple methods like "Get Bread. Toast
+Bread. Apply butter to toasted bread. Etc."
+
+We brought in this idea of "Order" as a teaching to help encourage you to see
+how to "wrap" methods. The _technique_ is what you should take away, not the
+label. Wrapping low-level methods with nicely-named, abstract methods is a good
+thing.
 
 When code is structured this way, there are many benefits:
 
@@ -23,57 +32,52 @@ When code is structured this way, there are many benefits:
 
 ## Starting Point
 
-First, let's start with some common "starter" code.
+First, let's start with some "starter" code.
 
 ```ruby
-vm = [[[{:name=>"Vanilla Cookies", :pieces=>3}, {:name=>"Pistachio Cookies",
-:pieces=>3}, {:name=>"Chocolate Cookies", :pieces=>3}, {:name=>"Chocolate Chip
-Cookies", :pieces=>3}], [{:name=>"Tooth-Melters", :pieces=>12},
-{:name=>"Tooth-Destroyers", :pieces=>12}, {:name=>"Enamel Eaters",
-:pieces=>12}, {:name=>"Dentist's Nighmare", :pieces=>20}], [{:name=>"Gummy Sour
-Apple", :pieces=>3}, {:name=>"Gummy Apple", :pieces=>5}, {:name=>"Gummy Moldy
-Apple", :pieces=>1}]], [[{:name=>"Grape Drink", :pieces=>1}, {:name=>"Orange
-Drink", :pieces=>1}, {:name=>"Pineapple Drink", :pieces=>1}], [{:name=>"Mints",
-:pieces=>13}, {:name=>"Curiously Toxic Mints", :pieces=>1000}, {:name=>"US
-Mints", :pieces=>99}]]]
+vm = [[[{:name=>"Vanilla Cookies", :price=>3}, {:name=>"Pistachio Cookies", :price=>3}, {:name=>"Chocolate Cookies", :price=>3}, {:name=>"Chocolate Chip Cookies", :price=>3}], [{:name=>"Tooth-Melters", :price=>12}, {:name=>"Tooth-Destroyers", :price=>12}, {:name=>"Enamel Eaters", :price=>12}, {:name=>"Dentist's Nightmare", :price=>20}], [{:name=>"Gummy Sour Apple", :price=>3}, {:name=>"Gummy Apple", :price=>5}, {:name=>"Gummy Moldy Apple", :price=>1}]], [[{:name=>"Grape Drink", :price=>1}, {:name=>"Orange Drink", :price=>1}, {:name=>"Pineapple Drink", :price=>1}], [{:name=>"Mints", :price=>13}, {:name=>"Curiously Toxic Mints", :price=>1000}, {:name=>"US Mints", :price=>99}]]]
 
-def total_snack_pieces_on_spinner(nds, row_index, column_index)
+def total_value_of_spinner(nds, row_index, column_index)
   coordinate_total = 0
   inner_len = nds[row_index][column_index].length
   inner_index = 0
   while inner_index < inner_len do
-    coordinate_total += nds[row_index][column_index][inner_index][:pieces]
+    coordinate_total += nds[row_index][column_index][inner_index][:price]
     inner_index += 1
   end
   coordinate_total
 end
 
-grand_piece_total = 0
+# Main code
+
+grand_total = 0
 row_index = 0
 while row_index < vm.length do
   column_index = 0
   while column_index < vm[row_index].length do
-    grand_piece_total += total_snack_pieces_on_spinner(vm, row_index,
-column_index)
+    grand_total += total_value_of_spinner(vm, row_index, column_index)
     column_index += 1
   end
   row_index += 1
 end
 
-p grand_piece_total #=> 1192
+# End Main code
+
+p grand_total #=> 1192
 ```
 
-## Wrap a First-Order Method
+## Create an "Nth-Order" method
 
 Looking at the starter code, the main loop is _still_ not so easy to reason
 about. Let's zoom in to it:
 
 ```ruby
-# Non-Runnable!
+grand_total = 0
+row_index = 0
 while row_index < vm.length do
   column_index = 0
   while column_index < vm[row_index].length do
-    grand_piece_total += total_snack_pieces_on_spinner(vm, row_index, column_index)
+    grand_total += total_value_of_spinner(vm, row_index, column_index)
     column_index += 1
   end
   row_index += 1
@@ -81,46 +85,46 @@ end
 ```
 
 That inner-most `while` _means_ "go to each spinner on the row, and total it
-up".  That is, "**total up the row based on its spinners**." Wouldn't it be
-GREAT if there were a method called `total_snack_pieces_in_row`? Again, there's
-nothing stopping us from making it!
+up".  That is, "**total up the row based on its spinners** by use of
+`total_value_of_spinner`" Wouldn't it be GREAT if there were a method called
+`total_snack_value_of_row`? Again, there's nothing stopping us from making it!
+All we have to do to total a row's snack count is add together the snack counts
+of its spinners.
 
-***Here's the crucial insight about how we'll write the new method***: a row is
-made up of spinners. So all we have to do to total a row's snack count is add
-together the snack counts of its spinners. Let's update the code:
+Let's update the code:
 
 ```ruby
-vm = [[[{:name=>"Vanilla Cookies", :pieces=>3}, {:name=>"Pistachio Cookies", :pieces=>3}, {:name=>"Chocolate Cookies", :pieces=>3}, {:name=>"Chocolate Chip Cookies", :pieces=>3}], [{:name=>"Tooth-Melters", :pieces=>12}, {:name=>"Tooth-Destroyers", :pieces=>12}, {:name=>"Enamel Eaters", :pieces=>12}, {:name=>"Dentist's Nighmare", :pieces=>20}], [{:name=>"Gummy Sour Apple", :pieces=>3}, {:name=>"Gummy Apple", :pieces=>5}, {:name=>"Gummy Moldy Apple", :pieces=>1}]], [[{:name=>"Grape Drink", :pieces=>1}, {:name=>"Orange Drink", :pieces=>1}, {:name=>"Pineapple Drink", :pieces=>1}], [{:name=>"Mints", :pieces=>13}, {:name=>"Curiously Toxic Mints", :pieces=>1000}, {:name=>"US Mints", :pieces=>99}]]]
+vm = [[[{:name=>"Vanilla Cookies", :price=>3}, {:name=>"Pistachio Cookies", :price=>3}, {:name=>"Chocolate Cookies", :price=>3}, {:name=>"Chocolate Chip Cookies", :price=>3}], [{:name=>"Tooth-Melters", :price=>12}, {:name=>"Tooth-Destroyers", :price=>12}, {:name=>"Enamel Eaters", :price=>12}, {:name=>"Dentist's Nighmare", :price=>20}], [{:name=>"Gummy Sour Apple", :price=>3}, {:name=>"Gummy Apple", :price=>5}, {:name=>"Gummy Moldy Apple", :price=>1}]], [[{:name=>"Grape Drink", :price=>1}, {:name=>"Orange Drink", :price=>1}, {:name=>"Pineapple Drink", :price=>1}], [{:name=>"Mints", :price=>13}, {:name=>"Curiously Toxic Mints", :price=>1000}, {:name=>"US Mints", :price=>99}]]]
 
-def total_snack_pieces_on_spinner(nds, row_index, column_index)
+def total_snack_price_on_spinner(nds, row_index, column_index)
   coordinate_total = 0
   inner_len = nds[row_index][column_index].length
   inner_index = 0
   while inner_index < inner_len do
-    coordinate_total += nds[row_index][column_index][inner_index][:pieces]
+    coordinate_total += nds[row_index][column_index][inner_index][:price]
     inner_index += 1
   end
   coordinate_total
 end
 
-def total_snack_pieces_in_row(nds, row_index)
+def total_snack_value_of_row(nds, row_index)
   grand_row_total = 0
   column_index = 0
   while column_index < nds[row_index].length do
-    grand_row_total += total_snack_pieces_on_spinner(nds, row_index, column_index)
+    grand_row_total += total_snack_price_on_spinner(nds, row_index, column_index)
     column_index += 1
   end
   grand_row_total
 end
 
-grand_piece_total = 0
+grand_total = 0
 row_index = 0
 while row_index < vm.length do
-  grand_piece_total += total_snack_pieces_in_row(vm, row_index)
+  grand_total += total_snack_value_of_row(vm, row_index)
   row_index += 1
 end
 
-p grand_piece_total #=> 1192
+p grand_total #=> 1192
 ```
 
 ## Wrap an Additional Method
@@ -131,10 +135,10 @@ the following:
 ```ruby
 # Non-Runnable
 
-grand_piece_total = 0
+grand_total = 0
 row_index = 0
 while row_index < vm.length do
-  grand_piece_total += total_snack_pieces_in_row(vm, row_index)
+  grand_total += total_snack_value_of_row(vm, row_index)
   row_index += 1
 end
 ```
@@ -142,62 +146,72 @@ end
 But this bit of code has a purpose. What does this code _mean_? What is it
 trying to accomplish?
 
-Isn't it "sum up the counts of all the rows" the same thing as seeking
-"`total_snack_pieces_in_machine`?" Just as before, we're going to "wrap"
-`total_snack_pieces_in_row` into a new method: `total_snack_pieces_in_machine`.
+Isn't it "sum up the values of all the rows" the same thing as seeking
+"`total_value_of_snacks_in_machine`?" Just as before, we're going to "wrap"
+`total_snack_value_of_row` into a new method: `total_value_of_snacks_in_machine`.
 
 ```ruby
-vm = [[[{:name=>"Vanilla Cookies", :pieces=>3}, {:name=>"Pistachio Cookies", :pieces=>3}, {:name=>"Chocolate Cookies", :pieces=>3}, {:name=>"Chocolate Chip Cookies", :pieces=>3}], [{:name=>"Tooth-Melters", :pieces=>12}, {:name=>"Tooth-Destroyers", :pieces=>12}, {:name=>"Enamel Eaters", :pieces=>12}, {:name=>"Dentist's Nighmare", :pieces=>20}], [{:name=>"Gummy Sour Apple", :pieces=>3}, {:name=>"Gummy Apple", :pieces=>5}, {:name=>"Gummy Moldy Apple", :pieces=>1}]], [[{:name=>"Grape Drink", :pieces=>1}, {:name=>"Orange Drink", :pieces=>1}, {:name=>"Pineapple Drink", :pieces=>1}], [{:name=>"Mints", :pieces=>13}, {:name=>"Curiously Toxic Mints", :pieces=>1000}, {:name=>"US Mints", :pieces=>99}]]]
+vm = [[[{:name=>"Vanilla Cookies", :price=>3}, {:name=>"Pistachio Cookies", :price=>3}, {:name=>"Chocolate Cookies", :price=>3}, {:name=>"Chocolate Chip Cookies", :price=>3}], [{:name=>"Tooth-Melters", :price=>12}, {:name=>"Tooth-Destroyers", :price=>12}, {:name=>"Enamel Eaters", :price=>12}, {:name=>"Dentist's Nighmare", :price=>20}], [{:name=>"Gummy Sour Apple", :price=>3}, {:name=>"Gummy Apple", :price=>5}, {:name=>"Gummy Moldy Apple", :price=>1}]], [[{:name=>"Grape Drink", :price=>1}, {:name=>"Orange Drink", :price=>1}, {:name=>"Pineapple Drink", :price=>1}], [{:name=>"Mints", :price=>13}, {:name=>"Curiously Toxic Mints", :price=>1000}, {:name=>"US Mints", :price=>99}]]]
 
-def total_snack_pieces_on_spinner(nds, row_index, column_index)
+def total_snack_price_on_spinner(nds, row_index, column_index)
   coordinate_total = 0
   inner_len = nds[row_index][column_index].length
   inner_index = 0
   while inner_index < inner_len do
-    coordinate_total += nds[row_index][column_index][inner_index][:pieces]
+    coordinate_total += nds[row_index][column_index][inner_index][:price]
     inner_index += 1
   end
   coordinate_total
 end
 
-def total_snack_pieces_in_row(nds, row_index)
+def total_snack_value_of_row(nds, row_index)
   grand_row_total = 0
   column_index = 0
   while column_index < nds[row_index].length do
-    grand_row_total += total_snack_pieces_on_spinner(nds, row_index, column_index)
+    grand_row_total += total_snack_price_on_spinner(nds, row_index, column_index)
     column_index += 1
   end
   grand_row_total
 end
 
-def total_snack_pieces_in_machine(nds)
-  grand_piece_total = 0
+def total_value_of_snacks_in_machine(nds)
+  grand_total = 0
   row_index = 0
   while row_index < nds.length do
-    grand_piece_total += total_snack_pieces_in_row(nds, row_index)
+    grand_total += total_snack_value_of_row(nds, row_index)
     row_index += 1
   end
-  grand_piece_total
+  grand_total
 end
 
-p total_snack_pieces_in_machine(vm) #=> 1192
+p total_value_of_snacks_in_machine(vm) #=> 1192
 ```
 
-Wow! That's really handy! Instead of one triple-nested `while` loop, we now
+Wow! That's really handy! Instead of one triply-nested `while` loop, we now
 have **three** helpful methods that will help hide away complexity and keep our
 code readable and maintainable.
 
 From the perspective of generating _insight_, our code knows what _insight_
 **we** want and what _insight_ **it is ready to share**. This code makes it
 easy to find by calling a method whose name immediately suggest the _insight_
-we want: `total_snack_pieces_in_machine`. The method then, internally, uses
+we want: `total_value_of_snacks_in_machine`. The method then, internally, uses
 _other_ methods to help keep itself clean and simple:
 
 ```text
-total_snack_pieces_in_machine
- \-> total_snack_pieces_in_row
-    \-> total_snack_pieces_on_spinner
+total_value_of_snacks_in_machine
+ \-> total_snack_value_of_row
+    \-> total_snack_price_on_spinner
 ```
+
+## Growing the Code
+
+Looking at the three methods we have to process this NDS, if we wanted to
+figure out the _insight_ of `average_price_per_snack` we could take
+`total_value_of_snacks_in_machine` and divide it by the (not-yet written)
+`total_number_of_snacks`. That really wouldn't be that much work at all.
+
+By creating clean, abstract, well-named, and small methods that use each other,
+we can grow the features of our code while keeping it clean and understandable.
 
 ## Lab
 
