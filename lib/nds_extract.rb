@@ -1,5 +1,5 @@
+$LOAD_PATH.unshift(File.dirname(__FILE__))
 require_relative './directors_database'
-# Call the method directors_database to retrieve the NDS
 
 def directors_totals(source)
   result = {}
