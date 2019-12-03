@@ -41,15 +41,14 @@ grand_total = 0
 row_index = 0 
 list = list_of_directors(source)
 totals = directors_totals(source)
-binding.pry
 while row_index < source.length do
-  grand_total = totals[list[row_index]]
+  grand_total += totals[list[row_index]]
   row_index += 1 
  end
  return grand_total
  end
-  # Write this implementation
-  #
+
+
   # Should use methods:
   # 1. directors_totals: returns a Hash of { dir_name => gross }
   # 2. list_of_directors: names provides an Array of directors names (use
