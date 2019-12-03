@@ -43,7 +43,7 @@ list = list_of_directors(directors_database)
 totals = directors_totals(directors_database)
 
 while row_index < source.length do
-  grand_total = totals[list]
+  grand_total += totals[list[row_index]]
  end
  row_index += 1 
  return grand_total
