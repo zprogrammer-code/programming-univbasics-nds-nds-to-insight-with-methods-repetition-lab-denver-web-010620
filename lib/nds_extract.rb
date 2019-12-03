@@ -44,9 +44,8 @@ totals = directors_totals(source)
 binding.pry
 while row_index < source.length do
   grand_total = totals[list[row_index]]
- 
+  row_index += 1 
  end
- row_index += 1 
  return grand_total
  end
   # Write this implementation
