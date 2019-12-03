@@ -22,7 +22,7 @@ def gross_for_director(d)
   end
 return total
 end
-#binding.pry
+
 def list_of_directors(source)
  list_of_director = []
   row_index = 0
@@ -41,9 +41,9 @@ grand_total = 0
 row_index = 0 
 list = list_of_directors(source)
 totals = directors_totals(source)
-
+bining.pry
 while row_index < source.length do
-  grand_total += totals[list[row_index]]
+  grand_total = totals[list[row_index]]
  end
  row_index += 1 
  return grand_total
