@@ -22,7 +22,7 @@ def gross_for_director(d)
   end
 return total
 end
-binding.pry
+#binding.pry
 def list_of_directors(source)
  list_of_director = []
   row_index = 0
