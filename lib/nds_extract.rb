@@ -41,7 +41,7 @@ grand_total = 0
 row_index = 0 
 list = list_of_directors(source)
 totals = directors_totals(source)
-bining.pry
+binding.pry
 while row_index < source.length do
   grand_total = totals[list[row_index]]
  end
