@@ -39,8 +39,8 @@ end
 def total_gross(source)
 grand_total = 0 
 row_index = 0 
-list = list_of_directors(directors_database)
-totals = directors_totals(directors_database)
+list = list_of_directors(source)
+totals = directors_totals(source)
 
 while row_index < source.length do
   grand_total += totals[list[row_index]]
